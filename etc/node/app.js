@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 const fse = require("fs-extra");
-const { spawn } = spawn('child_process');
-const steamcmd = 
+const { spawnSync } = require('child_process');
 
 async function start() {
     const updateOnStart = process.env.UPDATE_ON_START;
@@ -12,9 +11,10 @@ async function start() {
     const srcDir = `/app/container`;
     const destDir = `/app/backup`;
     // update command
-    const gameid = 105600;
+    // const gameid = 105600;
+    const gameid = 302550;
     
-    if (preUpdateBackup == true) {
+    if (preUpdateBackup == true) { // backup dirs action
         console.log('Creating backup...');
         copyFiles(srcDir, destDir);
     }
@@ -25,8 +25,15 @@ async function start() {
         // https://nodejs.org/api/child_process.html#child_processspawncommand-args-options
 
         console.log('Updating game...');
-        const steamcmd = spawn("steamcmd +login anonymous +force_install_dir"+ scrDir +"+app_update"+ gameid +"+quitgame");
+        const steamcmd = spawnSync("steamcmd +login anonymous +force_install_dir"+ scrDir +"+app_update"+ gameid +"+quitgame");
+        console.log('Complete!');
         
+        ps.on('close', (code) => {
+  if (code !== 0) {
+    console.log(`ps process exited with code ${code}`);
+  }
+  grep.stdin.end();
+});
     }
 }
 
