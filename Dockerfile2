@@ -1,0 +1,4 @@
+FROM cm2network/steamcmd:root
+
+RUN apt update && \
+    apt install --no-install-recommends -y nodejs npm
