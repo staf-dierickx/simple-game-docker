@@ -27,13 +27,20 @@ async function start() {
         console.log('Updating game...');
         const steamcmd = spawnSync("steamcmd +login anonymous +force_install_dir"+ scrDir +"+app_update"+ gameid +"+quitgame");
         console.log('Complete!');
-        
-        ps.on('close', (code) => {
-  if (code !== 0) {
-    console.log(`ps process exited with code ${code}`);
-  }
-  grep.stdin.end();
-});
+
+        steamcmd.stdout.on('data', (data) => {
+            console.log(data);
+        });
+
+        ps.stderr.on('data', (data) => {
+            console.error(`ps stderr: ${data}`);
+        });
+
+        steamcmd.on('close', (code) => {
+            if (code !== 0) {
+                console.log(`ps process exited with code ${code}`);
+            }
+        });
     }
 }
 
@@ -42,20 +49,6 @@ async function copyFiles(srcDir, destDir) {
     try {
         await fse.copy(scrDir, destDir);
         console.log("Success!");
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-// execute command
-async function execute(command) {
-    var execCommand = exec(command);
-    
-    try {
-        execCommand.stdout.on('data', function(data) {
-            console.log(data); 
-        });
-
     } catch (err) {
         console.error(err);
     }
